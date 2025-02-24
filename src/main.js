@@ -39,7 +39,7 @@ form.addEventListener('submit', async (event) => {
         totalHits = data.totalHits;
         renderImages(data.hits);
 
-        if (data.hits.length > 0) {
+        if (data.hits.length === 40) {
             loadMoreBtn.classList.add('visible');
         }
     } catch (error) {
@@ -67,7 +67,7 @@ loadMoreBtn.addEventListener('click', async () => {
         const data = await fetchImages(query, page);
         renderImages(data.hits);
 
-        if (page * 40 >= totalHits) {
+        if (data.hits.length ===40 && page * 40 < totalHits) {
             loadMoreBtn.classList.remove('visible');
             iziToast.info({ title: 'Info', message: "We're sorry, but you've reached the end of search results." });
         } else {
