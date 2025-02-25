@@ -15,6 +15,7 @@ let totalHits = 0;
 
 gallery.innerHTML = '';
 loadMoreBtn.classList.remove('visible');
+let loadedImages = 0;
 
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -30,6 +31,7 @@ form.addEventListener('submit', async (event) => {
     }
 
     page = 1;
+    loadedImages = 0;
     gallery.innerHTML = '';
     loadMoreBtn.classList.remove('visible');
     loader.classList.add('visible');
@@ -37,9 +39,10 @@ form.addEventListener('submit', async (event) => {
     try {
         const data = await fetchImages(query, page);
         totalHits = data.totalHits;
+        loadedImages += data.hits.length;
         renderImages(data.hits);
 
-        if (data.hits.length === 40) {
+        if (loadedImages < totalHits && data.hits.length === 40) {
             loadMoreBtn.classList.add('visible');
         }
     } catch (error) {
@@ -65,9 +68,10 @@ loadMoreBtn.addEventListener('click', async () => {
 
     try {
         const data = await fetchImages(query, page);
+        loadedImages += data.hits.length;
         renderImages(data.hits);
 
-        if (data.hits.length ===40 && page * 40 < totalHits) {
+        if (loadedImages >= totalHits || data.hits.length < 40) {
             loadMoreBtn.classList.remove('visible');
             iziToast.info({ title: 'Info', message: "We're sorry, but you've reached the end of search results." });
         } else {
